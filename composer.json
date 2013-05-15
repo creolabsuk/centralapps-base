@@ -1,0 +1,6 @@
+{
+    "require": {
+        "symfony/class-loader": "dev-master",
+        "pimple/pimple": "dev-master"
+    }
+}
