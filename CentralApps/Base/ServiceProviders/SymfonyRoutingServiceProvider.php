@@ -34,16 +34,25 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
             return new \Symfony\Component\Routing\Generator\UrlGenerator($container[$key]->getRouteCollection(), new \Symfony\Component\Routing\RequestContext('', $_SERVER['REQUEST_METHOD']));
         });
 
+		$this->registerRouteFunction($application);
+	}
+
+	// Made this a seperate method so logic can be injected for different projects
+	public function registerRouteFunction($application)
+	{
+		$key = $this->key;
 		$application->registerInvokableFunction('route', function($url=null) use ($application, $key) {
-			echo '<pre>' . print_r($url,true) . '</pre>';
-			echo $url;
 			$url = is_null($url) ? $_SERVER['REQUEST_URI'] : $url;
-			echo $url;
 			$container = $application->getContainer();
 			$router = $container[$key];
 			try {
 				$route = $container[$key]->match($url);
-				return $route;
+	            $controller = new $route['class']($this->container);
+	            $variables = $route;
+	            unset($variables['name']);
+	            unset($variables['class']);
+	            unset($variables['method']);
+	            $action = $controller->$route['method']($variables);
 			} catch (\Exception $e) {
 				throw $e;
 			}
