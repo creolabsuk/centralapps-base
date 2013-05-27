@@ -6,6 +6,7 @@ $application = new \CentralApps\Base\Application(new \Pimple());
 
 if ('web' === $application->getContext()) {
 	// register web context related service providers
+	$application->registerServiceProvider(new \CentralApps\Base\ServiceProviders\AuthenticationServiceProvider());
 } else {
 	// register cli contet related service providers
 }

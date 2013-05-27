@@ -5,12 +5,18 @@ class Application
 {
 	protected $container;
 	protected $invokableFunctions = array();
+	protected $serviceProviders = array();
 	protected $bootSequence = null;
 
 	public function __construct($container)
 	{
 		$this->container = $container;
 		$this->bootSequence = new \splPriorityQueue();
+	}
+
+	public function loadConfiguration()
+	{
+		//
 	}
 
 	public function getContext()
@@ -55,6 +61,7 @@ class Application
 	{
 		$provider->register($this);
 		$this->bootSequence->insert($provider, $provider->getBootPriority());
+		$this->serviceProviders[] = $provider;
 	}
 
 	// This magic method allows support for service providers key method invokation
