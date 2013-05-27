@@ -23,11 +23,11 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 			$cache = null;
 			$locator = new \Symfony\Component\Config\FileLocator(array( $c[$settings_key]['root_path'] ) );
 	        $loader = new \Symfony\Component\Routing\Loader\YamlFileLoader($locator);
-	        $loader->load($routing_filename);
+	        $loader->load('routes.yml');
 	        $request = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
 	        $requestContext = new \Symfony\Component\Routing\RequestContext($request, $_SERVER['REQUEST_METHOD']);
-	        $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), $routing_filename, array('cache_dir' => $cache), $requestContext);
-	        $this->router = $router;
+	        $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), 'routes.yml', array('cache_dir' => $cache), $requestContext);
+	        return $router;
 		});
 
 		$container[$this->key . '.url_generator'] = $container->share(function ($container) use ($key) {
@@ -35,8 +35,18 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
         });
 
 		$application->registerInvokableFunction('route', function($url=null) use ($application, $key) {
+			echo '<pre>' . print_r($url,true) . '</pre>';
+			echo $url;
 			$url = is_null($url) ? $_SERVER['REQUEST_URI'] : $url;
-			$application->getContainer()[$key]->route($url);
+			echo $url;
+			$container = $application->getContainer();
+			$router = $container[$key];
+			try {
+				$route = $container[$key]->match($url);
+				return $route;
+			} catch (\Exception $e) {
+				throw $e;
+			}
 		});
 	}
 
