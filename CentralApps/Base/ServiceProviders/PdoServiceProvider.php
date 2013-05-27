@@ -3,9 +3,30 @@ namespace CentralApps\Base\ServiceProviders;
 
 class PdoServiceProvider implements ServiceProviderInterface
 {
-	public function register(Application $application, $key, $settings_prefix_key='settings')
+	protected $bootPriority = 0;
+	protected $key;
+
+	public function __construct($boot_priority=10, $key=null, $settings_prefix_key='settings')
+	{
+		$this->bootPriority = $boot_priority;
+		$this->key = (is_null($key)) ? 'pdo' : $key;
+	}
+
+	public function register(\CentralApps\Base\Application $application)
 	{
 		$container = $application->getContainer();
-		$container[$key] = $container->share();
+		$container[$this->key] = $container->share(function($c) {
+			//
+		});
+	}
+
+	public function boot()
+	{
+
+	}
+
+	public function getBootPriority()
+	{
+		return $this->bootPriority;
 	}
 }
