@@ -7,11 +7,24 @@ class Application
 	protected $invokableFunctions = array();
 	protected $serviceProviders = array();
 	protected $bootSequence = null;
+	protected $applicationRootFolder = null;
+	protected $configurationKey = 'settings';
 
-	public function __construct($container)
+	public function __construct(\CentralApps\Base\Containers $container = null, $application_root_folder=null)
 	{
-		$this->container = $container;
+		$this->container = (is_null($container)) ? new \CentralApps\Base\Containers\Container() : $container;
 		$this->bootSequence = new \splPriorityQueue();
+		$this->applicationRootFolder = is_null($application_root_folder) ? __DIR__.'/' : $application_root_folder;
+	}
+
+	public function getApplicationRootFolder()
+	{
+		return $this->applicationRootFolder;
+	}
+
+	public function setConfigurationKey($key)
+	{
+		$this->configurationKey = $key;
 	}
 
 	public function loadConfiguration()
