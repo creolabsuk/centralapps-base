@@ -27,7 +27,7 @@ class PdoServiceProvider implements ServiceProviderInterface
 		$container[$this->key] = $container->share(function($c) use ($key, $type) {
 		$settings = $container->getSettingFromNestedKey(array('databases', $key, $type));
 			try {
-				$class = (true === $this->developmentMode) ? '\CentralApps\Pdo\Pdo' : '\Pdo';
+				$class = (isset($settings['development_mode']) && true == $settings['development_mode']) ? '\CentralApps\Pdo\Pdo' : '\Pdo';
                 $db = new $class("{$type}:host={$settings['host']};port={$settings['port']};dbname={$settings['database']}", $settings['user'], $settings['password'], array(\PDO::ATTR_PERSISTENT => true, \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true));
                 $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
                 return $db;
