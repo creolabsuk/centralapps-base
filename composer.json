@@ -18,6 +18,6 @@
     ],
     "license": "MIT",
     "autoload": {
-        "psr-0": { "CentralApps\\Authentication": "" }
+        "psr-0": { "CentralApps\\Base": "" }
     }
 }
