@@ -41,18 +41,25 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	public function registerRouteFunction($application)
 	{
 		$key = $this->key;
-		$application->registerInvokableFunction('route', function($url=null) use ($application, $key) {
+		$application->registerInvokableFunction('route', function($url=null, $remove_utm_tags=true, $variables_to_ignore = array()) use ($application, $key) {
 			$url = is_null($url) ? $_SERVER['REQUEST_URI'] : $url;
+			if ($remove_utm_tags) {
+				$url = preg_replace('/&?utm_(.*?)\=[^&]+/', '', $url);
+				$url = (strlen($url) > 1) ? rtrim($url, '/') : $url;
+			}
 			$container = $application->getContainer();
 			$router = $container[$key];
 			try {
 				$route = $container[$key]->match($url);
 	            $controller = new $route['class']($application->getContainer());
 	            $variables = $route;
-	            unset($variables['name']);
-	            unset($variables['class']);
-	            unset($variables['method']);
-	            // TODO: test this
+	            $variables_to_ignore = array_merge($variables_to_ignore, array('name', 'class', 'method'));
+	            foreach ($variables_to_ignore as $ignore) {
+	            	if (isset($variables[$ignore])) {
+	            		unset($variables[$ignore]);
+	            	}
+	            }
+
 	            call_user_func_array(array($controller, $route['method']), $variables);
 	            //$action = $controller->$route['method']($variables);
 			} catch (\Exception $e) {
