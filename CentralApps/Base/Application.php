@@ -10,7 +10,7 @@ class Application
 	protected $applicationRootFolder = null;
 	protected $configurationKey = 'settings';
 
-	public function __construct(\CentralApps\Base\Containers $container = null, $application_root_folder=null)
+	public function __construct(\CentralApps\Base\Containers\AbstractContainer $container = null, $application_root_folder=null)
 	{
 		$this->container = (is_null($container)) ? new \CentralApps\Base\Containers\Container() : $container;
 		$this->bootSequence = new \splPriorityQueue();
