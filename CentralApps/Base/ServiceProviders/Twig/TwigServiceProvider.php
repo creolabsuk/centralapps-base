@@ -1,12 +1,12 @@
 <?php
-namespace CentralApps\Base\ServiceProviders;
+namespace CentralApps\Base\ServiceProviders\Twig;
 
-class TwigServiceProvider implements ServiceProviderInterface
+class TwigServiceProvider implements \CentralApps\Base\ServiceProviders\ServiceProviderInterface
 {
 	protected $bootPriority = 0;
 	protected $key;
 
-	public function __construct($boot_priority=10, $key=null)
+	public function __construct($boot_priority=10, $key=null, $settings_prefix_key='settings')
 	{
 		$this->bootPriority = $boot_priority;
 		$this->key = (is_null($key)) ? 'twig' : $key;
@@ -15,20 +15,11 @@ class TwigServiceProvider implements ServiceProviderInterface
 	public function register(\CentralApps\Base\Application $application)
 	{
 		$container = $application->getContainer();
+		$container[$this->key] = $container->share(function($c) {
+			$twig_loader = new \Twig_Loader_FileSystem('/');
+			return new \Twig_Environment($loader);
+		});
 		$key = $this->key;
-		$container[$this->key] = $container->share(function($c) use ($key) {
-			$settings = $c->getSettingFromNestedKey($key);
-			$loader = new \Twig_Loader_Filesystem($settings['path']);
-			$twig = new \Twig_Environment($loader, array(
-			    'cache' => '/path/to/compilation_cache',
-			));
-			return $twig;
-		});
-
-		$application->registerInvokableFunction('render', function($template, $tags) use ($application, $key) {
-			return $application->getContainer()[$key]->render($template, $tags);
-		});
-
 		$application->registerInvokableFunction('getTemplateEngineAdapter', function() use ($application, $key) {
 			return new \CentralApps\Base\Views\TemplateEngineAdapters\TwigTemplateEngineAdapter($application->getContainer()[$key]);
 		});
@@ -43,11 +34,13 @@ class TwigServiceProvider implements ServiceProviderInterface
 		});
 	}
 
-	public function boot() {}
+	public function boot()
+	{
+
+	}
 
 	public function getBootPriority()
 	{
 		return $this->bootPriority;
 	}
-
 }
