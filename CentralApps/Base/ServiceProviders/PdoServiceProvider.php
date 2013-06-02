@@ -24,7 +24,7 @@ class PdoServiceProvider implements ServiceProviderInterface
 		$container = $application->getContainer();
 		$key = $this->key;
 		$type = $this->type;
-		$container[$this->key] = $container->share(function($c) use ($key, $type) {
+		$container[$this->key . '_' . $type] = $container->share(function($c) use ($key, $type) {
 		$settings = $container->getSettingFromNestedKey(array('databases', $key, $type));
 			try {
 				$class = (isset($settings['development_mode']) && true == $settings['development_mode']) ? '\CentralApps\Pdo\Pdo' : '\Pdo';
