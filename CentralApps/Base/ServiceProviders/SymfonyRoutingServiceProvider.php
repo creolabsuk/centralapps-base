@@ -52,7 +52,9 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	            unset($variables['name']);
 	            unset($variables['class']);
 	            unset($variables['method']);
-	            $action = $controller->$route['method']($variables);
+	            // TODO: test this
+	            call_user_func_array(array($controller, $route['method']), $variables);
+	            //$action = $controller->$route['method']($variables);
 			} catch (\Exception $e) {
 				throw $e;
 			}
