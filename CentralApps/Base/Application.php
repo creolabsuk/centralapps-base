@@ -68,7 +68,7 @@ class Application
 	public function __call($method, $args)
 	{
 		if (array_key_exists($method, $this->invokableFunctions)) {
-			call_user_func($this->invokableFunctions[$method], $args);
+			call_user_func_array($this->invokableFunctions[$method], $args);
 		}
 	}
 }
