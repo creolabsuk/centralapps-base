@@ -16,7 +16,10 @@ class Application
 
 	public function loadConfiguration()
 	{
-		//
+		$xml_loader = new \GroundSix\Config\XmlLoader(new \GroundSix\Config\ConfigurationsCollection());
+		call_user_func_array(array($xml_loader, 'loadFiles'), func_get_args());
+		$merger = new \GroundSix\Config\Merger();
+		$this->container[$this->configurationKey] = $merger->merge($xml_loader->getConfigurations());
 	}
 
 	public function getContext()
