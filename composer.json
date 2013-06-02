@@ -6,7 +6,8 @@
     "require": {
         "php": ">=5.3.0",
         "symfony/class-loader": "dev-master",
-        "pimple/pimple": "dev-master"
+        "pimple/pimple": "dev-master",
+        "groundsix/config": "dev-master"
     },
     "authors": [
     	{
