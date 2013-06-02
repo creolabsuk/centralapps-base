@@ -22,7 +22,7 @@ class Application
 		$this->container[$this->configurationKey] = $merger->merge($xml_loader->getConfigurations());
 	}
 
-	public function getContext()
+	public function getExecutionContext()
 	{
 		return (php_sapi_name() == 'cli') ? 'cli' : 'web';
 	}
