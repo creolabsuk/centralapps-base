@@ -47,7 +47,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 			$router = $container[$key];
 			try {
 				$route = $container[$key]->match($url);
-	            $controller = new $route['class']($this->container);
+	            $controller = new $route['class']($application->getContainer());
 	            $variables = $route;
 	            unset($variables['name']);
 	            unset($variables['class']);
