@@ -14,11 +14,11 @@ abstract class AbstractContainer extends \Pimple
 	{
 		$partially_processed_array = (is_null($partially_processed_array)) ? $this[$settings_key] : $partially_processed_array;
 		if (count($nested_key) > 1) {
-			$current_key = $nested_key[0];
-			unset($nested_key[0]);
+			$current_key = array_shift($nested_key);
+			$partially_processed_array = $partially_processed_array[$current_key];
 			return $this->getSettingFromNestedKey($nested_key, $settings_key, $partially_processed_array);
 		} else {
-			return $partially_processed_array[$nested_key[0]];
+			return $partially_processed_array[array_shift($nested_key)];
 		}
 	}
 }
