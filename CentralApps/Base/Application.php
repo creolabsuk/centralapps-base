@@ -56,11 +56,6 @@ class Application
 		$this->invokableFunctions[$key] = $function;
 	}
 
-	public function registerBootFunction($function)
-	{
-		$this->bootFunctions[] = $function;
-	}
-
 	public function getContainer()
 	{
 		return $this->container;
@@ -85,6 +80,8 @@ class Application
 	{
 		if (array_key_exists($method, $this->invokableFunctions)) {
 			return call_user_func_array($this->invokableFunctions[$method], $args);
+		} else {
+			throw new \RuntimeException("Invokable method " . $method . " has not been registered with the application");
 		}
 	}
 }
