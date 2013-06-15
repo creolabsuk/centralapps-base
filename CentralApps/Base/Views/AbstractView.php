@@ -11,8 +11,6 @@ abstract class AbstractView
 	protected $title;
 	protected $helpers = array();
 
-
-
 	public function __construct($container, $template_engine_adapter = null, $application_view=null)
 	{
 		$this->container = $container;
@@ -24,7 +22,21 @@ abstract class AbstractView
 		}
 	}
 
+	public function setApplicationView(ApplicationViewInterface $application_view)
+	{
+		$this->applicationView = $application_view;
+	}
+
+	public function prepareApplicationView()
+	{
+		if (!is_null($this->applicationView)) {
+			$this->applicationView->preParseHook($this->templateEngineAdapter);
+		}
+	}
+
 	public function generate($model=null, $model_name=null);
+
+	public function render($model=null, $model_name=null);
 
 	public function addHelper(ViewHelperInterface $helper)
 	{

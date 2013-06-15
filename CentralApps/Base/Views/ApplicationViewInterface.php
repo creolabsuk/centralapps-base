@@ -6,5 +6,7 @@ namespace CentralApps\Base\Views;
  */
 interface ApplicationViewInterface
 {
-	public function preParseHook($container, TemplateEngineInterface $template_engine_adapter);
+	public function __construct($container);
+
+	public function preParseHook(TemplateEngineInterface $template_engine_adapter);
 }

@@ -17,10 +17,11 @@ class TwigServiceProvider implements ServiceProviderInterface
 		$container = $application->getContainer();
 		$key = $this->key;
 		$container[$this->key] = $container->share(function($c) use ($key) {
-			$settings = $c->getSettingFromNestedKey($key);
+			$settings = $c->getSettingFromNestedKey($nested_key = array($key));
+			$cache_settings = $settings['cache'];
 			$loader = new \Twig_Loader_Filesystem($settings['path']);
 			$twig = new \Twig_Environment($loader, array(
-			    'cache' => '/path/to/compilation_cache',
+			    'cache' => (isset($cache_settings['enabled']) && true == $cache_settings['enabled']) ? ((isset($cache_settings['path'])) ? $cache_settings['path'] : null) : null,
 			));
 			return $twig;
 		});
@@ -35,7 +36,7 @@ class TwigServiceProvider implements ServiceProviderInterface
 
 		$application->registerInvokableFunction('getView', function($view_name=null, $template_name=null, $variables=null) use ($application) {
 			if (is_null($view_name)) {
-				$view_class "\CentralApps\Base\Views\BasicView";
+				$view_class = "\CentralApps\Base\Views\BasicView";
 			} else {
 				$view_class = "\CentralApps\Base\Views\\" . $view_name;
 			}
