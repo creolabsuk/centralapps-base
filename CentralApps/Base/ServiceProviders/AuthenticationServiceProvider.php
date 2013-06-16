@@ -109,7 +109,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 
 	public function boot()
 	{
-		echo 'booting the authentication provder';
+		//echo 'booting the authentication provder';
 	}
 
 	public function getBootPriority()
