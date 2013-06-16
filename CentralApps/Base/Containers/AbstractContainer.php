@@ -15,7 +15,7 @@ abstract class AbstractContainer extends \Pimple
 		$request = array();
         $request['get'] = $_GET;
         $request['post'] = $_POST;
-        $request['session'] = $_SESSION;
+        $request['session'] = isset($_SESSION) ? $_SESSION : array();
         $request['cookies'] = $_COOKIE;
         $request['server'] = $_SERVER;
         $this['request'] = $request;
