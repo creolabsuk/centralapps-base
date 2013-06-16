@@ -21,8 +21,8 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 
 			$provider_container = new \CentralApps\Authentication\Providers\Container();
 
-			$user_factory = $c->getFromNestedKey(implode(',', $settings['dependencies']['user_factory']));
-			$user_gateway = $c->getFromNestedKey(implode(',', $authentication_settings['dependencies']['user_gateway']));
+			$user_factory = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_factory']));
+			$user_gateway = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_gateway']));
 
 			if (true == $settings['providers']['username_password']['enabled']) {
 				$username_password_provider = new \CentralApps\Authentication\Providers\UsernamePasswordProvider($c['request'], $user_factory, $user_gateway);
@@ -32,13 +32,13 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 
 			if (true == $settings['providers']['session']['enabled']) {
 				$session_provider = new \CentralApps\Authentication\Providers\SessionProvider($c['request'], $user_factory, $user_gateway);
-            	$session_provider->setSessionName(implode(',', $settings['providers']['session']['name']));
+            	$session_provider->setSessionName($settings['providers']['session']['name']);
             	$provider_container->insert($session_provider, 10);
 			}
 
 			if (true == $settings['providers']['cookie']['enabled']) {
 				$cookie_provider = new \CentralApps\Authentication\Providers\CookieProvider($c['request'], $user_factory, $user_gateway);
-            	$cookie_provider->setCookieNames(implode(',', $settings['providers']['cookie']['names']));
+            	$cookie_provider->setCookieNames(explode(',', $settings['providers']['cookie']['names']));
             	$provider_container->insert($cookie_provider, 20);
 			}
 
@@ -46,8 +46,9 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 		});
 
 		$container[$this->key .'_settings'] = $container->share(function($c) use ($key, $settings){
-			$user_factory = $c->getFromNestedKey(implode(',', $settings['dependencies']['user_factory']));
-			$user_gateway = $c->getFromNestedKey(implode(',', $settings['dependencies']['user_gateway']));
+
+			$user_factory = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_factory']));
+			$user_gateway = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_gateway']));
 
 			$authentication_container = array(
                 'username_field' => $settings['providers']['username_password']['username_field'],
@@ -57,7 +58,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
                 'user_factory' => $user_factory,
                 'user_gateway' => $user_gateway,
                 'session_name' => $settings['providers']['session']['name'], // Shouldn't be setting this twice
-                'cookie_names' => implode(',', $settings['providers']['cookie']['names']), // Shouldn't be setting this twice
+                'cookie_names' => explode(',', $settings['providers']['cookie']['names']), // Shouldn't be setting this twice
                 'session_processor' => null, //deprecated
                 'cookie_processor' => null //deprecated
             );
@@ -68,6 +69,8 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 		$container[$this->key . '_processor'] = $container->share(function($c) use ($key, $settings) {
 			return new \CentralApps\Authentication\Processor($c[$key . '_settings'], $c[$key . '_provider_container']);
 		});
+
+		$this->registerInvokableFunctions($application);
 	}
 
 	protected function registerInvokableFunctions($application)
@@ -85,18 +88,22 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 					// went well
 				} else {
 					// went badly
+					echo 'failed to login';
 				}
-			} elseif ($container[$key.'_processor']->isAttemptingToRegister()) {
+			}
+			/*
+			oAuth only
+			elseif ($container[$key.'_processor']->isAttemptingToRegister()) {
 				$container[$key.'_processor']->handleRegister();
 			}
 
-			if (!is_null($this['current_user']) && $this[$key .'_processor']->isAttemptingToAttach()) {
-	            if ($this[$key.'_processor']->handleAttach()) {
+			if (!is_null($container['current_user']) && $container[$key .'_processor']->isAttemptingToAttach()) {
+	            if ($container[$key.'_processor']->handleAttach()) {
 	                // attached
 	            } else {
 	                // attach fail
 	            }
-	        }
+	        }*/
 		});
 	}
 
