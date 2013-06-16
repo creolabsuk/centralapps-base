@@ -61,23 +61,52 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
                 'session_processor' => null, //deprecated
                 'cookie_processor' => null //deprecated
             );
+
+            return new \CentralApps\Authentication\DependencyInjectionSettingsProvider($authentication_container);
+		});
+
+		$container[$this->key . '_processor'] = $container->share(function($c) use ($key, $settings) {
+			return new \CentralApps\Authentication\Processor($c[$key . '_settings'], $c[$key . '_provider_container']);
 		});
 	}
 
 	protected function registerInvokableFunctions($application)
 	{
-		$application->registerInvokableFunction('checkAuthentication', function() use ($application){
-			//
+		$key = $this->key;
+		$application->registerInvokableFunction('checkAuthentication', function() use ($key, $application){
+			$container = $application->getContainer();
+			$container[$key.'_processor']->checkForAuthentication();
+			$container[$key.'_processor']->rememberPasswordIfRequested();
+			$user = $container[$key.'_processor']->getUser();
+			$container['current_user'] = (is_object($user)) ? $user : null;
+
+			if ($container[$key.'_processor']->hasAttemptedToLogin()) {
+				if (!is_null($container['current_user'])) {
+					// went well
+				} else {
+					// went badly
+				}
+			} elseif ($container[$key.'_processor']->isAttemptingToRegister()) {
+				$container[$key.'_processor']->handleRegister();
+			}
+
+			if (!is_null($this['current_user']) && $this[$key .'_processor']->isAttemptingToAttach()) {
+	            if ($this[$key.'_processor']->handleAttach()) {
+	                // attached
+	            } else {
+	                // attach fail
+	            }
+	        }
 		});
 	}
 
 	public function boot()
 	{
-		echo 'booting the router';
+		echo 'booting the authentication provder';
 	}
 
 	public function getBootPriority()
 	{
-
+		return $this->bootPriority;
 	}
 }
