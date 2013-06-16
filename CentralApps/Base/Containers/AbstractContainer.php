@@ -40,7 +40,7 @@ abstract class AbstractContainer extends \Pimple
 	 * @param array $partially_processed_array if we are recursively looping, this will contain a subset of the settings array
 	 * @return mixed
 	 */
-	public function getFromNestedKey($nested_key=array(), array $partially_processed_array=null)
+	public function getFromNestedKey($nested_key=array(), $partially_processed_array=null)
 	{
 		$partially_processed_array = (is_null($partially_processed_array)) ? $this : $partially_processed_array;
 		if (count($nested_key) > 1) {
