@@ -27,6 +27,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 			if (true == $settings['providers']['username_password']['enabled']) {
 				$username_password_provider = new \CentralApps\Authentication\Providers\UsernamePasswordProvider($c['request'], $user_factory, $user_gateway);
             	$username_password_provider->setUsernameField($settings['providers']['username_password']['username_field']);
+            	$username_password_provider->setPasswordField($settings['providers']['username_password']['password_field']);
             	$provider_container->insert($username_password_provider, 0);
 			}
 
