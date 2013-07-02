@@ -76,7 +76,13 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 
 	protected function registerInvokableFunctions($application)
 	{
+		// TODO: authentication callbacks?
 		$key = $this->key;
+
+		$application->registerInvokableFunction('logout', function() use ($key, $application) {
+			$application->getContainer()[$key.'_processor']->logout();
+		});
+
 		$application->registerInvokableFunction('checkAuthentication', function() use ($key, $application){
 			$container = $application->getContainer();
 			$container[$key.'_processor']->checkForAuthentication();

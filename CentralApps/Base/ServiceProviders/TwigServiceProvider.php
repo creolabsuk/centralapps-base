@@ -26,6 +26,10 @@ class TwigServiceProvider implements ServiceProviderInterface
 			return $twig;
 		});
 
+		$container['template_variables'] = $container->share(function($c){
+			return new \CentralApps\Base\Views\TemplateVariables();
+		});
+
 		$application->registerInvokableFunction('render', function($template, $tags) use ($application, $key) {
 			return $application->getContainer()[$key]->render($template, $tags);
 		});

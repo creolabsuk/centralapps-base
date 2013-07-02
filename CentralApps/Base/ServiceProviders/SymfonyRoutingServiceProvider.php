@@ -41,7 +41,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	public function registerRouteFunction($application)
 	{
 		$key = $this->key;
-		$application->registerInvokableFunction('route', function($url=null, $remove_utm_tags=true, $variables_to_ignore = array()) use ($application, $key) {
+		$application->registerInvokableFunction('route', function($url=null, $remove_utm_tags=true, $variables_to_ignore = array(), $pre_processing_callback = null) use ($application, $key) {
 			$url = is_null($url) ? $_SERVER['REQUEST_URI'] : $url;
 			if ($remove_utm_tags) {
 				$url = preg_replace('/&?utm_(.*?)\=[^&]+/', '', $url);
@@ -58,6 +58,10 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	            	if (isset($variables[$ignore])) {
 	            		unset($variables[$ignore]);
 	            	}
+	            }
+
+	            if (!is_null($pre_processing_callback)) {
+	            	$pre_processing_callback($route);
 	            }
 
 	            call_user_func_array(array($controller, $route['method']), $variables);
