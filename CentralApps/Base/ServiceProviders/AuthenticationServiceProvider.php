@@ -43,6 +43,11 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
             	$provider_container->insert($cookie_provider, 20);
 			}
 
+			if (true == $settings['providers']['api']['enabled']) {
+				$api_provider = new \CentralApps\Authentication\Providers\APIProvider($c['request'], $user_factory, $user_gateway);
+            	$provider_container->insert($api_provider, 0);
+			}
+
 			return $provider_container;
 		});
 
