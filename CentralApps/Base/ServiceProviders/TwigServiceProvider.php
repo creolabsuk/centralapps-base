@@ -30,6 +30,7 @@ class TwigServiceProvider implements ServiceProviderInterface
 			return new \CentralApps\Base\Views\TemplateVariables();
 		});
 
+
 		$application->registerInvokableFunction('render', function($template, $tags) use ($application, $key) {
 			return $application->getContainer()[$key]->render($template, $tags);
 		});
@@ -37,7 +38,7 @@ class TwigServiceProvider implements ServiceProviderInterface
 		$application->registerInvokableFunction('getTemplateEngineAdapter', function() use ($application, $key) {
 			return new \CentralApps\Base\ServiceProviders\Twig\TwigTemplateEngineAdapter($application->getContainer()[$key]);
 		});
-		
+
 		$container['template_engine_adapter'] = $container->share(function($c) use ($application) {
 			return $application->getTemplateEngineAdapter();
 		});

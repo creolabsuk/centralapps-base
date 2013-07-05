@@ -19,7 +19,7 @@ class TwigTemplateEngineAdapter implements \CentralApps\Base\Views\TemplateEngin
 
 	public function useVariables($variables)
 	{
-		$this->varibles = $variables;
+		$this->variables = $variables;
 	}
 
 	public function render()
