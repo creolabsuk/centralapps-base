@@ -38,7 +38,7 @@ class TwigServiceProvider implements ServiceProviderInterface
 			return new \CentralApps\Base\Views\TemplateEngineAdapters\TwigTemplateEngineAdapter($application->getContainer()[$key]);
 		});
 		
-		$container['template_engine_adapter'] = $this->share(function($c) use ($application) {
+		$container['template_engine_adapter'] = $container->share(function($c) use ($application) {
 			return $application->getTemplateEngineAdapter();
 		});
 
