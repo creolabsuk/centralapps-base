@@ -34,9 +34,9 @@ abstract class AbstractView
 		}
 	}
 
-	public function generate($model=null, $model_name=null);
+	abstract public function generate($model=null, $model_name=null);
 
-	public function render($model=null, $model_name=null);
+	abstract public function render($model=null, $model_name=null);
 
 	public function addHelper(ViewHelperInterface $helper)
 	{
