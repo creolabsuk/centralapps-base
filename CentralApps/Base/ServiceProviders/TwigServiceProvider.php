@@ -20,9 +20,15 @@ class TwigServiceProvider implements ServiceProviderInterface
 			$settings = $c->getSettingFromNestedKey($nested_key = array($key));
 			$cache_settings = $settings['cache'];
 			$loader = new \Twig_Loader_Filesystem($settings['path']);
-			$twig = new \Twig_Environment($loader, array(
+			$twig_config = array(
 			    'cache' => (isset($cache_settings['enabled']) && true == $cache_settings['enabled']) ? ((isset($cache_settings['path'])) ? $cache_settings['path'] : null) : null,
-			));
+			);
+			if (1 == $settings['debug']) {
+				$twig_config['debug'] = true;
+			}
+			$twig = new \Twig_Environment($loader, $twig_config);
+			$twig->addExtension(new \Twig_Extension_Debug());
+
 			return $twig;
 		});
 
