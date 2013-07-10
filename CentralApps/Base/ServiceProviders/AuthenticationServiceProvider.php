@@ -28,6 +28,8 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 				$username_password_provider = new \CentralApps\Authentication\Providers\UsernamePasswordProvider($c['request'], $user_factory, $user_gateway);
             	$username_password_provider->setUsernameField($settings['providers']['username_password']['username_field']);
             	$username_password_provider->setPasswordField($settings['providers']['username_password']['password_field']);
+            	$username_password_provider->setRememberField($settings['providers']['username_password']['remember_password_field']);
+            	$username_password_provider->setRememberFieldYesValue($settings['providers']['username_password']['remember_password_yes_value']);
             	$provider_container->insert($username_password_provider, 0);
 			}
 
@@ -38,6 +40,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 			}
 
 			if (true == $settings['providers']['cookie']['enabled']) {
+				// TODO: remember user isn't working
 				$cookie_provider = new \CentralApps\Authentication\Providers\CookieProvider($c['request'], $user_factory, $user_gateway);
             	$cookie_provider->setCookieNames(explode(',', $settings['providers']['cookie']['names']));
             	$provider_container->insert($cookie_provider, 20);
