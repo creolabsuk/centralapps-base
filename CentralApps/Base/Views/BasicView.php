@@ -7,9 +7,17 @@ class BasicView extends AbstractView
 	protected function prepare($model=null, $model_name=null)
 	{
 		$this->prepareApplicationView();
-		$model_name = (is_null($model_name)) ? 'model' : $model_name;
-		$vars = $this->container['template_variables']->getVariables();
-		$this->templateEngineAdapter->useVariables(array_merge($this->container['template_variables']->getVariables(), array($model_name => $model)));
+		if (is_null($model_name)) {
+			if (is_array($model)) {
+				foreach ($model as $key => $value) {
+					$this->container['template_variables'][$key] = $value;
+				}
+			}
+		} else {
+			$this->container['template_variables'][$model_name] = $model;
+		}
+
+		$this->templateEngineAdapter->useVariables($this->container['template_variables']->getVariables());
 	}
 
 	public function generate($model=null, $model_name=null)

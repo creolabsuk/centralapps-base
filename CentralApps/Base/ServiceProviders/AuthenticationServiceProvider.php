@@ -88,6 +88,10 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 			$application->getContainer()[$key.'_processor']->logout();
 		});
 
+		$application->registerInvokableFunction('hasAttemptedToLogin', function() use ($key, $application) {
+			return $application->getContainer()[$key . '_processor']->hasAttemptedToLogin();
+		});
+
 		$application->registerInvokableFunction('checkAuthentication', function() use ($key, $application){
 			$container = $application->getContainer();
 			$container[$key.'_processor']->checkForAuthentication();
@@ -100,7 +104,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 					// went well
 				} else {
 					// went badly
-					echo 'failed to login';
+					throw new \CentralApps\Base\Exceptions\InvalidLoginCredentialsException();
 				}
 			}
 			/*
