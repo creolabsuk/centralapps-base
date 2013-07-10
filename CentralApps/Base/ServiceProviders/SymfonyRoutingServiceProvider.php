@@ -44,7 +44,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 		$application->registerInvokableFunction('route', function($url=null, $remove_utm_tags=true, $variables_to_ignore = array(), $pre_processing_callback = null) use ($application, $key) {
 			$url = is_null($url) ? $_SERVER['REQUEST_URI'] : $url;
 			if ($remove_utm_tags) {
-				$url = preg_replace('/&?utm_(.*?)\=[^&]+/', '', $url);
+				$url = preg_replace('/(\?|\&)?utm_[a-z]+=[^\&]+/', '', $url);
 				$url = (strlen($url) > 1) ? rtrim($url, '/') : $url;
 			}
 			$container = $application->getContainer();
