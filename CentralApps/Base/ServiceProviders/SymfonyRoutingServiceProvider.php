@@ -55,6 +55,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	            $controller = new $route['class']($application->getContainer());
 	            $variables = $route;
 	            $variables_to_ignore = array_merge($variables_to_ignore, array('name', 'class', 'method', '_route'));
+	            $route_name = $variables['_route'];
 	            foreach ($variables_to_ignore as $ignore) {
 	            	if (isset($variables[$ignore])) {
 	            		unset($variables[$ignore]);
@@ -62,7 +63,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	            }
 
 	            if (!is_null($pre_processing_callback)) {
-	            	$pre_processing_callback($route);
+	            	$pre_processing_callback($route, $route_name);
 	            }
 
 	            call_user_func_array(array($controller, $route['method']), $variables);
