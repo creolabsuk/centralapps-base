@@ -26,8 +26,9 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	        $loader->load('routes.yml');
 	        $request = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
 	        $request_method = (isset($_POST) && isset($_POST['_method'])) ? $_POST['_method'] : $_SERVER['REQUEST_METHOD'];
-	        $requestContext = new \Symfony\Component\Routing\RequestContext($request, $request_method);
-	        $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), 'routes.yml', array('cache_dir' => $cache), $requestContext);
+	       	$request_context = new \Symfony\Component\Routing\RequestContext($request, $request_method, $_SERVER['SERVER_NAME']);
+	        $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), 'routes.yml', array('cache_dir' => $cache), $request_context);
+	        
 	        return $router;
 		});
 
