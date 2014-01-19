@@ -28,7 +28,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	        $request_method = (isset($_POST) && isset($_POST['_method'])) ? $_POST['_method'] : $_SERVER['REQUEST_METHOD'];
 	       	$request_context = new \Symfony\Component\Routing\RequestContext($request, $request_method, $_SERVER['SERVER_NAME']);
 	        $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), 'routes.yml', array('cache_dir' => $cache), $request_context);
-	        
+
 	        return $router;
 		});
 
@@ -55,16 +55,17 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 				$route = $container[$key]->match($url);
 	            $controller = new $route['class']($application->getContainer());
 	            $variables = $route;
-	            $variables_to_ignore = array_merge($variables_to_ignore, array('name', 'class', 'method', '_route'));
 	            $route_name = $variables['_route'];
+
+	            if (!is_null($pre_processing_callback)) {
+	            	$pre_processing_callback($variables, $route_name);
+	            }
+
+	            $variables_to_ignore = array_merge($variables_to_ignore, array('name', 'class', 'method', '_route'));
 	            foreach ($variables_to_ignore as $ignore) {
 	            	if (isset($variables[$ignore])) {
 	            		unset($variables[$ignore]);
 	            	}
-	            }
-
-	            if (!is_null($pre_processing_callback)) {
-	            	$pre_processing_callback($route, $route_name);
 	            }
 
 	            call_user_func_array(array($controller, $route['method']), $variables);
