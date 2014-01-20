@@ -25,15 +25,15 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 	        $loader = new \Symfony\Component\Routing\Loader\YamlFileLoader($locator);
 	        $loader->load('routes.yml');
 	        $request = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
-	        $request_method = (isset($_POST) && isset($_POST['_method'])) ? $_POST['_method'] : $_SERVER['REQUEST_METHOD'];
-	       	$request_context = new \Symfony\Component\Routing\RequestContext($request, $request_method, $_SERVER['SERVER_NAME']);
+	        $request_method = (isset($_POST) && isset($_POST['_method'])) ? $_POST['_method'] : (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '');
+	       	$request_context = new \Symfony\Component\Routing\RequestContext($request, $request_method, (isset($_SERVER['SERVER_NAME']) ? $_SERVER['SERVER_NAME'] : ''));
 	        $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), 'routes.yml', array('cache_dir' => $cache), $request_context);
 
 	        return $router;
 		});
 
 		$container[$this->key . '.url_generator'] = $container->share(function ($container) use ($key) {
-            return new \Symfony\Component\Routing\Generator\UrlGenerator($container[$key]->getRouteCollection(), new \Symfony\Component\Routing\RequestContext('', $_SERVER['REQUEST_METHOD']));
+            return new \Symfony\Component\Routing\Generator\UrlGenerator($container[$key]->getRouteCollection(), new \Symfony\Component\Routing\RequestContext('', (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '')));
         });
 
 		$this->registerRouteFunction($application);
