@@ -3,10 +3,10 @@ namespace CentralApps\Base;
 
 abstract class AbstractController
 {
-	protected $container;
+    protected $container;
 
-	public function __construct($container)
-	{
-		$this->container = $container;
-	}
+    public function __construct($container)
+    {
+        $this->container = $container;
+    }
 }

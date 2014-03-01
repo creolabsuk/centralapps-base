@@ -6,7 +6,7 @@ class TwigServiceProvider implements \CentralApps\Base\ServiceProviders\ServiceP
 	protected $bootPriority = 0;
 	protected $key;
 
-	public function __construct($boot_priority=10, $key=null, $settings_prefix_key='settings')
+	public function __construct($boot_priority = 10, $key = null, $settings_prefix_key = 'settings')
 	{
 		$this->bootPriority = $boot_priority;
 		$this->key = (is_null($key)) ? 'twig' : $key;
@@ -24,7 +24,7 @@ class TwigServiceProvider implements \CentralApps\Base\ServiceProviders\ServiceP
 			return new \CentralApps\Base\Views\TemplateEngineAdapters\TwigTemplateEngineAdapter($application->getContainer()[$key]);
 		});
 
-		$application->registerInvokableFunction('getView', function($view_name=null, $template_name=null, $variables=null) use ($application) {
+		$application->registerInvokableFunction('getView', function($view_name = null, $template_name = null, $variables = null) use ($application) {
 			if (is_null($view_name)) {
 				$view_class "\CentralApps\Base\Views\BasicView";
 			} else {
