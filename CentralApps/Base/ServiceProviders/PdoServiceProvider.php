@@ -31,6 +31,7 @@ class PdoServiceProvider implements ServiceProviderInterface
 				$class = (isset($settings['development_mode']) && true == $settings['development_mode']) ? '\CentralApps\Pdo\Pdo' : '\Pdo';
                 $db = new $class("{$type}:host={$settings['host']};port={$settings['port']};dbname={$settings['database']}", $settings['user'], $password, array(\PDO::ATTR_PERSISTENT => true, \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES 'utf8'",\PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true));
                 $db->setAttribute(\PDO::ATTR_ERRMODE, \PDO::ERRMODE_EXCEPTION);
+
                 return $db;
             } catch (\PDOException $e) {
                 echo $e->getMessage();

@@ -3,5 +3,5 @@ namespace CentralApps\Base\Views;
 
 interface ViewHelperInterface
 {
-	public function execute($view);
+    public function execute($view);
 }
