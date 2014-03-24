@@ -68,7 +68,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
                     }
                 }
 
-                call_user_func_array(array($controller, $route['method']), $variables);
+                return call_user_func_array(array($controller, $route['method']), $variables);
             } catch (\Exception $e) {
                 throw $e;
             }
