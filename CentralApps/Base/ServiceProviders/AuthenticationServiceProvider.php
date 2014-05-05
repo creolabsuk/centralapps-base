@@ -98,13 +98,13 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
         $application->registerInvokableFunction('checkAuthentication', function() use ($key, $application){
             $container = $application->getContainer();
             $container[$key.'_processor']->checkForAuthentication();
-            $container[$key.'_processor']->rememberPasswordIfRequested();
             $user = $container[$key.'_processor']->getUser();
             $container['current_user'] = (is_object($user)) ? $user : null;
 
             if ($container[$key . '_processor']->hasAttemptedToLogin()) {
                 if (!is_null($container['current_user'])) {
                     // went well
+                    $container[$key.'_processor']->rememberPasswordIfRequested();
                 } else {
                     // went badly
                     throw new \CentralApps\Base\Exceptions\InvalidLoginCredentialsException();
