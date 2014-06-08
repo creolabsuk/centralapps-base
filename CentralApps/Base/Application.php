@@ -10,7 +10,7 @@ class Application
     protected $applicationRootFolder = null;
     protected $configurationKey = 'settings';
 
-    public function __construct(\CentralApps\Base\Containers\AbstractContainer $container = null, $application_root_folder=null)
+    public function __construct(\CentralApps\Base\Containers\Container $container = null, $application_root_folder = null)
     {
         $this->container = (is_null($container)) ? new \CentralApps\Base\Containers\Container() : $container;
         $this->bootSequence = new \splPriorityQueue();
@@ -19,6 +19,7 @@ class Application
 
     public function getApplicationRootFolder()
     {
+        // TODO: refactor this away
         return $this->applicationRootFolder;
     }
 
@@ -27,12 +28,30 @@ class Application
         $this->configurationKey = $key;
     }
 
-    public function loadConfiguration()
+    public function loadConfiguration($configuration_file)
     {
-        $xml_loader = new \GroundSix\Config\XmlLoader(new \GroundSix\Config\ConfigurationsCollection());
-        call_user_func_array(array($xml_loader, 'loadFiles'), func_get_args());
-        $merger = new \GroundSix\Config\Merger();
-        $this->container[$this->configurationKey] = $merger->merge($xml_loader->getConfigurations());
+        // TODO: migrate settings/configuration out of the application
+        $file_contents = simplexml_load_file($configuration_file);
+        if (false == $file_contents) {
+            throw new \Exception('Configuration file ' . $configuration_file . ' not found');
+        }
+        $configuration = $this->convertSimpleXmlElementToArray($file_contents);
+
+        $this->container[$this->configurationKey] = $configuration;
+    }
+
+    protected function convertSimpleXmlElementToArray(\SimpleXMLElement $configuration)
+    {
+        // TODO: migrate settings/configuration out of the application
+        $configuration = (array) $configuration;
+        $resulting_array = $configuration;
+        foreach ($configuration as $key => $value) {
+            if ($value instanceOf \SimpleXMLElement) {
+                $resulting_array[$key] = $this->convertSimpleXmlElementToArray($value);
+            }
+        }
+
+        return $resulting_array;
     }
 
     public function getExecutionContext()

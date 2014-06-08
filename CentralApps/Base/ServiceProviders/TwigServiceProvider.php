@@ -15,14 +15,14 @@ class TwigServiceProvider implements ServiceProviderInterface
     public function register(\CentralApps\Base\Application $application)
     {
         $container = $application->getContainer();
-        $key = $this->key;
-        $container[$this->key] = $container->share(function($c) use ($key) {
-            $settings = $c->getSettingFromNestedKey($nested_key = array($key));
+
+        $container[$this->key] = function ($c) {
+            $settings = $c->getSettingFromNestedKey($nested_key = [$this->key]);
             $cache_settings = $settings['cache'];
             $loader = new \Twig_Loader_Filesystem($settings['path']);
-            $twig_config = array(
+            $twig_config = [
                 'cache' => (isset($cache_settings['enabled']) && true == $cache_settings['enabled']) ? ((isset($cache_settings['path'])) ? $cache_settings['path'] : null) : null,
-            );
+            ];
             if (1 == $settings['debug']) {
                 $twig_config['debug'] = true;
             }
@@ -30,25 +30,25 @@ class TwigServiceProvider implements ServiceProviderInterface
             $twig->addExtension(new \Twig_Extension_Debug());
 
             return $twig;
-        });
+        };
 
-        $container['template_variables'] = $container->share(function($c){
+        $container['template_variables'] = function ($c){
             return new \CentralApps\Base\Views\TemplateVariables();
+        };
+
+        $application->registerInvokableFunction('render', function ($template, $tags) use ($application) {
+            return $application->getContainer()[$this->key]->render($template, $tags);
         });
 
-        $application->registerInvokableFunction('render', function($template, $tags) use ($application, $key) {
-            return $application->getContainer()[$key]->render($template, $tags);
+        $application->registerInvokableFunction('getTemplateEngineAdapter', function() use ($application) {
+            return new \CentralApps\Base\ServiceProviders\Twig\TwigTemplateEngineAdapter($application->getContainer()[$this->key]);
         });
 
-        $application->registerInvokableFunction('getTemplateEngineAdapter', function() use ($application, $key) {
-            return new \CentralApps\Base\ServiceProviders\Twig\TwigTemplateEngineAdapter($application->getContainer()[$key]);
-        });
-
-        $container['template_engine_adapter'] = $container->share(function($c) use ($application) {
+        $container['template_engine_adapter'] = function ($c) use ($application) {
             return $application->getTemplateEngineAdapter();
-        });
+        };
 
-        $application->registerInvokableFunction('getView', function($view_name=null, $template_name=null, $variables=null) use ($application) {
+        $application->registerInvokableFunction('getView', function($view_name = null, $template_name = null, $variables = null) use ($application) {
             if (is_null($view_name)) {
                 $view_class = "\CentralApps\Base\Views\BasicView";
             } else {

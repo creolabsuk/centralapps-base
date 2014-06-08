@@ -2,7 +2,7 @@
 require_once(__DIR__.'/vendor/autoload.php');
 require_once(__DIR__.'/bootstrap.php');
 
-$application = new \CentralApps\Base\Application(new \Pimple());
+$application = new \CentralApps\Base\Application(new \Pimple\Container());
 
 if ('web' === $application->getContext()) {
 	// register web context related service providers

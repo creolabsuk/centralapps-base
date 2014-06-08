@@ -6,7 +6,7 @@ class SymfonyHttpRequestServiceProvider implements ServiceProviderInterface
     protected $bootPriority = 0;
     protected $key;
 
-    public function __construct($boot_priority=10, $key=null)
+    public function __construct($boot_priority = 10, $key = null)
     {
         $this->bootPriority = $boot_priority;
         $this->key = (is_null($key)) ? 'request' : $key;
@@ -14,11 +14,10 @@ class SymfonyHttpRequestServiceProvider implements ServiceProviderInterface
 
     public function register(\CentralApps\Base\Application $application)
     {
-        $key = $this->key;
         $container = $application->getContainer();
-        $container[$this->key] = $container->share(function($c) {
+        $container[$this->key] = function ($c) {
             return \Symfony\Component\HttpFoundation\Request::createFromGlobals();
-        });
+        };
     }
 
     public function boot()

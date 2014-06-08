@@ -4,10 +4,9 @@
     "description": "Base application structure",
     "keywords": ["application", "framework", "structure"],
     "require": {
-        "php": ">=5.3.0",
+        "php": ">=5.4.0",
         "symfony/class-loader": ">=2.2.0",
-        "pimple/pimple": "v1.1.0",
-        "groundsix/config": "dev-master"
+        "pimple/pimple": ">=2.0.0",
     },
     "authors": [
     	{

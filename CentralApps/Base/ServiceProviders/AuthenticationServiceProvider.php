@@ -17,7 +17,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
         $container = $application->getContainer();
         $key = $this->key;
         $settings = $container->getSettingFromNestedKey(array($key));
-        $container[$this->key . '_provider_container'] = $container->share(function($c) use ($key, $settings) {
+        $container[$this->key . '_provider_container'] = function ($c) use ($key, $settings) {
 
             $provider_container = new \CentralApps\Authentication\Providers\Container();
 
@@ -52,32 +52,32 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
             }
 
             return $provider_container;
-        });
+        };
 
-        $container[$this->key .'_settings'] = $container->share(function($c) use ($key, $settings){
+        $container[$this->key .'_settings'] = function ($c) use ($key, $settings){
 
             $user_factory = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_factory']));
             $user_gateway = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_gateway']));
 
-            $authentication_container = array(
+            $authentication_container = array[
                 'username_field' => $settings['providers']['username_password']['username_field'],
                 'password_field' => $settings['providers']['username_password']['password_field'],
                 'remember_password_field' => $settings['providers']['username_password']['remember_password_field'],
                 'remember_password_yes_value' => $settings['providers']['username_password']['remember_password_yes_value'],
                 'user_factory' => $user_factory,
                 'user_gateway' => $user_gateway,
-                'session_name' => $settings['providers']['session']['name'], // Shouldn't be setting this twice
-                'cookie_names' => explode(',', $settings['providers']['cookie']['names']), // Shouldn't be setting this twice
+                'session_name' => $settings['providers']['session']['name'],
+                'cookie_names' => explode(',', $settings['providers']['cookie']['names']),
                 'session_processor' => null, //deprecated
                 'cookie_processor' => null //deprecated
-            );
+            ];
 
             return new \CentralApps\Authentication\DependencyInjectionSettingsProvider($authentication_container);
-        });
+        };
 
-        $container[$this->key . '_processor'] = $container->share(function($c) use ($key, $settings) {
+        $container[$this->key . '_processor'] = function ($c) use ($key, $settings) {
             return new \CentralApps\Authentication\Processor($c[$key . '_settings'], $c[$key . '_provider_container']);
-        });
+        };
 
         $this->registerInvokableFunctions($application);
     }
@@ -87,14 +87,27 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
         // TODO: authentication callbacks?
         $key = $this->key;
 
+        $this->registerLogoutFunction($application, $key);
+        $this->registerAttemptedToLoginFunction($application, $key);
+        $this->registerCheckAuthenticationFunction($application, $key);
+    }
+
+    protected function registerLogoutFunction($application, $key)
+    {
         $application->registerInvokableFunction('logout', function() use ($key, $application) {
             $application->getContainer()[$key.'_processor']->logout();
         });
+    }
 
+    protected function registerAttemptedToLoginFunction($application, $key)
+    {
         $application->registerInvokableFunction('hasAttemptedToLogin', function() use ($key, $application) {
             return $application->getContainer()[$key . '_processor']->hasAttemptedToLogin();
         });
+    }
 
+    protected function registerCheckAuthenticationFunction($application, $key)
+    {
         $application->registerInvokableFunction('checkAuthentication', function() use ($key, $application){
             $container = $application->getContainer();
             $container[$key.'_processor']->checkForAuthentication();
@@ -102,13 +115,10 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
             $container['current_user'] = (is_object($user)) ? $user : null;
 
             if ($container[$key . '_processor']->hasAttemptedToLogin()) {
-                if (!is_null($container['current_user'])) {
-                    // went well
-                    $container[$key.'_processor']->rememberPasswordIfRequested();
-                } else {
-                    // went badly
+                if (is_null($container['current_user'])) {
                     throw new \CentralApps\Base\Exceptions\InvalidLoginCredentialsException();
                 }
+                $container[$key.'_processor']->rememberPasswordIfRequested();
             }
         });
     }

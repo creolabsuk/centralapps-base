@@ -5,7 +5,7 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 {
     public function setUp()
     {
-        $this->application = new Application($this->getMock('\CentralApps\Base\Containers\AbstractContainer'), __DIR__.'/test');
+        $this->application = new Application($this->getMock('\CentralApps\Base\Containers\Container'), __DIR__.'/test');
     }
 
     public function testCanDetectCliExecutionContext()
@@ -15,13 +15,13 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function testCanGetContainerFromApplication()
     {
-        $this->assertInstanceOf('\CentralApps\Base\Containers\AbstractContainer', $this->application->getContainer());
+        $this->assertInstanceOf('\CentralApps\Base\Containers\Container', $this->application->getContainer());
     }
 
     public function testCanGetApplicationRootFolder()
     {
         $this->assertEquals(__DIR__.'/test', $this->application->getApplicationRootFolder());
-        $this->application = new Application($this->getMock('\CentralApps\Base\Containers\AbstractContainer'));
+        $this->application = new Application($this->getMock('\CentralApps\Base\Containers\Container'));
         $this->assertEquals(str_replace('unit/', '', __DIR__.'/'), $this->application->getApplicationRootFolder());
     }
 
@@ -40,7 +40,9 @@ class ApplicationTest extends \PHPUnit_Framework_TestCase
 
     public function testCanRegisterInvokableFunctions()
     {
-        $this->application->registerInvokableFunction('testFunction', function(){ return 'test';});
+        $this->application->registerInvokableFunction('testFunction', function() {
+            return 'test';
+        });
         $this->assertEquals('test', $this->application->testFunction());
         $this->setExpectedException('\RuntimeException');
         $this->application->fakeFunction();
