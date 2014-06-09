@@ -4,8 +4,8 @@ namespace CentralApps\Base;
 class Application
 {
     protected $container;
-    protected $invokableFunctions = array();
-    protected $serviceProviders = array();
+    protected $invokableFunctions = [];
+    protected $serviceProviders = [];
     protected $bootSequence = null;
     protected $applicationRootFolder = null;
     protected $configurationKey = 'settings';
@@ -69,8 +69,7 @@ class Application
         }
     }
 
-    // In PHP 5.4 we could use callable as the type hint for function
-    public function registerInvokableFunction($key, $function)
+    public function registerInvokableFunction($key, callable $function)
     {
         $this->invokableFunctions[$key] = $function;
     }
@@ -78,6 +77,13 @@ class Application
     public function getContainer()
     {
         return $this->container;
+    }
+
+    public function registerServiceProviders(array $providers)
+    {
+        foreach ($providers as $provider) {
+            $this->registerServiceProvider($provider);
+        }
     }
 
     // Service providers are very inspired from Silex, however I've added

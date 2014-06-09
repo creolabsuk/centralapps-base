@@ -1,10 +1,14 @@
 <?php
 namespace CentralApps\Base\ServiceProviders;
 
+// TODO: it would be good to be able to add filters to the router
+// so instead of callbacks, stripping tags and ignoring variables
+// the filters would take care of that
 class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 {
     protected $bootPriority = 0;
     protected $key;
+    protected $filters = [];
 
     public function __construct($boot_priority=10, $key=null)
     {

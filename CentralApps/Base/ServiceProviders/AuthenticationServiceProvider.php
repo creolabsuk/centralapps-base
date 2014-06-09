@@ -59,7 +59,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
             $user_factory = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_factory']));
             $user_gateway = $c->getFromNestedKey(explode(',', $settings['dependencies']['user_gateway']));
 
-            $authentication_container = array[
+            $authentication_container = [
                 'username_field' => $settings['providers']['username_password']['username_field'],
                 'password_field' => $settings['providers']['username_password']['password_field'],
                 'remember_password_field' => $settings['providers']['username_password']['remember_password_field'],
