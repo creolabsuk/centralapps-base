@@ -20,16 +20,22 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
     {
         $container = $application->getContainer();
         $container[$this->key] = function ($c) use ($application) {
-            $routing_settings = $c->getSettingFromNestedKey($nested_key = array($this->key));
+            $routing_settings = $c->getSettingFromNestedKey([$this->key]);
             $cache = (isset($routing_settings['cache'])) ? $routing_settings['cache'] : null;
 
-            $locator = new \Symfony\Component\Config\FileLocator(array($application->getApplicationRootFolder()));
+            $locator = new \Symfony\Component\Config\FileLocator([$application->getApplicationRootFolder()]);
             $loader = new \Symfony\Component\Routing\Loader\YamlFileLoader($locator);
             $loader->load('routes.yml');
+
             $request = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
             $request_method = (isset($_POST) && isset($_POST['_method'])) ? $_POST['_method'] : (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '');
-            $request_context = new \Symfony\Component\Routing\RequestContext($request, $request_method, (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''));
-            $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), 'routes.yml', array('cache_dir' => $cache), $request_context);
+            $request_context = new \Symfony\Component\Routing\RequestContext(
+                $request,
+                $request_method,
+                (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '')
+            );
+
+            $router = new \Symfony\Component\Routing\Router(new \Symfony\Component\Routing\Loader\YamlFileLoader($locator), 'routes.yml', ['cache_dir' => $cache], $request_context);
 
             return $router;
         };
@@ -41,37 +47,51 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
         $this->registerRouteFunction($application);
     }
 
+    public function addFilters(array $filters)
+    {
+        foreach ($filters as $filter) {
+            $this->addFilter($filter);
+        }
+    }
+
+    public function addFilter(Routing\FilterInterface $filter)
+    {
+        $this->filters[] = $filter;
+    }
+
     // Made this a seperate method so logic can be injected for different projects
     public function registerRouteFunction($application)
     {
-        $application->registerInvokableFunction('route', function($url = null, $remove_utm_tags = true, $variables_to_ignore = [], $pre_processing_callback = null) use ($application) {
-            $url = is_null($url) ? $_SERVER['REQUEST_URI'] : $url;
-            if ($remove_utm_tags) {
-                $url = preg_replace('/(\?|\&)?utm_[a-z]+=[^\&]+/', '', $url);
-                $url = (strlen($url) > 1) ? rtrim($url, '/') : $url;
-            }
+        $container = $application->getContainer();
+        $application->registerInvokableFunction('route', function($url) use ($container) {
 
-            $container = $application->getContainer();
-            $router = $container[$this->key];
+            foreach ($this->filters as $filter) {
+                if (array_key_exists('CentralApps\Base\ServiceProviders\Routing\UrlFilter', class_uses($filter))) {
+                    $url = $filter->filterUrl($url);
+                }
+            }
 
             try {
                 $route = $container[$this->key]->match($url);
-                $controller = new $route['class']($application->getContainer());
-                $variables = $route;
-                $route_name = $variables['_route'];
+            } catch (\Exception $e) {
+                throw  $e;
+            }
 
-                if (!is_null($pre_processing_callback)) {
-                    $pre_processing_callback($variables, $route_name);
+            $route_action = [
+                new $route['class']($container),
+                $route['method']
+            ];
+
+            $variables = $route;
+
+            foreach ($this->filters as $filter) {
+                if (array_key_exists('CentralApps\Base\ServiceProviders\Routing\RouteFilter', class_uses($filter))) {
+                    $variables = $filter->filterRoute($variables);
                 }
+            }
 
-                $variables_to_ignore = array_merge($variables_to_ignore, ['name', 'class', 'method', '_route']);
-                foreach ($variables_to_ignore as $ignore) {
-                    if (isset($variables[$ignore])) {
-                        unset($variables[$ignore]);
-                    }
-                }
-
-                return call_user_func_array([$controller, $route['method']], $variables);
+            try {
+                return call_user_func_array($route_action, $variables);
             } catch (\Exception $e) {
                 throw $e;
             }
