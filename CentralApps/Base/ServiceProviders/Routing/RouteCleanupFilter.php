@@ -13,11 +13,11 @@ class RouteCleanupFilter implements RouteFilter
     public function filterRoute(array $route)
     {
         foreach ($this->variablesToIgnore as $ignore) {
-            if (isset($variables[$ignore])) {
-                unset($variables[$ignore]);
+            if (isset($route[$ignore])) {
+                unset($route[$ignore]);
             }
         }
 
-        return $variables;
+        return $route;
     }
 }

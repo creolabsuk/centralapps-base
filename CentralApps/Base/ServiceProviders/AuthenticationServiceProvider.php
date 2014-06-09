@@ -106,7 +106,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
 
     protected function registerCheckAuthenticationFunction($application, $key)
     {
-        $application->registerInvokableFunction('checkAuthentication', function() use ($key, $application){
+        $application->registerInvokableFunction('checkAuthentication', function() use ($key, $application) {
             $container = $application->getContainer();
             $container[$key.'_processor']->checkForAuthentication();
             $user = $container[$key.'_processor']->getUser();

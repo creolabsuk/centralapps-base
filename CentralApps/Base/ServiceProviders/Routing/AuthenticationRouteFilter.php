@@ -7,6 +7,16 @@ class AuthenticationRouteFilter implements RouteFilter
     protected $loggedInKey = 'logged_in';
     protected $notLoggedInException = '\Exception';
 
+    public function setLoggedInException($exception_class)
+    {
+        $this->notLoggedInException = $exception_class;
+    }
+
+    public function setCurrentUser($user)
+    {
+        $this->currentUser = $user;
+    }
+
     public function filterRoute(array $route)
     {
         if (isset($route[$this->loggedInKey]) && true == $route[$this->loggedInKey]) {
