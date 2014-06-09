@@ -67,9 +67,7 @@ class AuthenticationServiceProvider implements ServiceProviderInterface
                 'user_factory' => $user_factory,
                 'user_gateway' => $user_gateway,
                 'session_name' => $settings['providers']['session']['name'],
-                'cookie_names' => explode(',', $settings['providers']['cookie']['names']),
-                'session_processor' => null, //deprecated
-                'cookie_processor' => null //deprecated
+                'cookie_names' => explode(',', $settings['providers']['cookie']['names'])
             ];
 
             return new \CentralApps\Authentication\DependencyInjectionSettingsProvider($authentication_container);
