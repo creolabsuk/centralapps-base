@@ -54,7 +54,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
         }
     }
 
-    public function addFilter(Routing\FilterInterface $filter)
+    public function addFilter(Routing\Filter $filter)
     {
         $this->filters[] = $filter;
     }
@@ -66,7 +66,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
         $application->registerInvokableFunction('route', function($url) use ($container) {
 
             foreach ($this->filters as $filter) {
-                if (array_key_exists('CentralApps\Base\ServiceProviders\Routing\UrlFilter', class_uses($filter))) {
+                if ($filter instanceof \CentralApps\Base\ServiceProviders\Routing\UrlFilter) {
                     $url = $filter->filterUrl($url);
                 }
             }
@@ -85,7 +85,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
             $variables = $route;
 
             foreach ($this->filters as $filter) {
-                if (array_key_exists('CentralApps\Base\ServiceProviders\Routing\RouteFilter', class_uses($filter))) {
+                if ($filter instanceof \CentralApps\Base\ServiceProviders\Routing\RouteFilter) {
                     $variables = $filter->filterRoute($variables);
                 }
             }
