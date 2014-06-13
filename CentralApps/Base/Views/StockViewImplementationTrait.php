@@ -1,7 +1,7 @@
 <?php
 namespace CentralApps\Base\Views;
 
-trait StockViewImplementation
+trait StockViewImplementationTrait
 {
     protected $template = null;
     protected $statusCode = 200;
