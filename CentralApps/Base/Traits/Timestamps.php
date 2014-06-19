@@ -1,7 +1,7 @@
 <?php
 namespace CentralApps\Base\Traits;
 
-trait HasTimestampsTrait
+trait Timestamps
 {
     // TODO: consider type hinting for instances of DateTime?
     protected $created;
