@@ -1,7 +1,7 @@
 <?php
 namespace CentralApps\Base\Events;
 
-trait EventListenerBinder
+abstract class EventListenerBinder
 {
     protected function bindListener(\Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher, \CentralApps\Base\Events\EventListenerInterface $listener)
     {
