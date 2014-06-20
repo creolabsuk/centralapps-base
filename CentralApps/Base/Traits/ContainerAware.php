@@ -1,7 +1,7 @@
 <?php
 namespace CentralApps\Base\Traits;
 
-trait ContainerAwareTrait
+trait ContainerAware
 {
     protected $container;
 
