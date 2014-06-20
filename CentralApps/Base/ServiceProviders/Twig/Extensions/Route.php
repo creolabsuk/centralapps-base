@@ -6,7 +6,7 @@ class Route extends \Twig_Extension
     protected $urlGenerator;
     protected $container = array();
 
-    public function __construct(\Symfony\Component\Routing\Generator\UrlGenerator\Interface $url_generator, $container = [])
+    public function __construct(\Symfony\Component\Routing\Generator\UrlGeneratorInterface $url_generator, $container = [])
     {
         $this->urlGenerator = $url_generator;
         $this->container = $container;
