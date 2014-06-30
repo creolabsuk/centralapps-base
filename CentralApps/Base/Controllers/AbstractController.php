@@ -3,6 +3,8 @@ namespace CentralApps\Base\Controllers;
 
 abstract class AbstractController
 {
+    use \CentralAPps\Base\Traits\Dispatcher;
+    
     protected $container = null;
     protected $model;
     protected $formHelper = null;
@@ -87,12 +89,6 @@ abstract class AbstractController
             
             return call_user_func_array(array($this, $callback_method), $callback_params);
         }
-    }
-
-    public function dispatch($event_name, $payload = null)
-    {
-        $standard_event = $this->container['standard_event']($payload);
-        $this->container['dispatcher']->dispatch($event_name, $standard_event);
     }
 
     protected function prepareFormHelper($object = null, $id_getter = 'getId', $id_field = 'id')
