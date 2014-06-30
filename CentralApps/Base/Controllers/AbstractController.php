@@ -3,7 +3,7 @@ namespace CentralApps\Base\Controllers;
 
 abstract class AbstractController
 {
-    use \CentralAPps\Base\Traits\Dispatcher;
+    use \CentralApps\Base\Traits\Dispatcher;
     
     protected $container = null;
     protected $model;
