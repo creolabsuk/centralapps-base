@@ -21,13 +21,20 @@ class PaginationInjectionFilter implements RouteFilter, UrlFilter
     {
         if (!is_null($this->pagination)) {
             $page = [];
-            preg_match('/(\?|\&)?' . $this->pageKey . '=[^\&]+/', $url, $page);
+
+            preg_match('/(\?|\&)?' . $this->pageKey . '+=[^\&]+/', $url, $page);
             if (count($page) > 0) {
                 $page = preg_replace('/(\?|\&)?' . $this->pageKey . '=/', '', $page[0]);
+
                 $this->pagination->setCurrentPageNumber($page);
+                $url = preg_replace('/(\?|\&)?' . $this->pageKey . '=' . $page . '/', '', $url);
             }
 
-            $url = preg_replace('/(\?|\&)?' . $this->pageKey . '=[^\&]+/', '', $url);
+            $url = preg_replace('/(\?|\&)?' . $this->pageKey . '+=[^\&]/', '', $url);
+        }
+
+        if (strpos($url, '?') === false) {
+            $url = preg_replace('/&/', '?', $url, 1);
         }
 
         return $url;
