@@ -42,10 +42,17 @@ class PaginationInjectionFilter implements RouteFilter, UrlFilter
 
     public function filterRoute(array $route)
     {
-        if (is_object($this->pagination) && array_key_exists($this->paginationKey, $route) && true == $route[$this->paginationKey]) {
-            $route[$this->paginationKey] = $this->pagination;
-         }
+        if (array_key_exists($this->paginationKey, $route)) {
+            if (is_object($this->pagination) && array_key_exists($this->paginationKey, $route) && true == $route[$this->paginationKey]) {
+                $route[$this->paginationKey] = $this->pagination;
+            }
 
-         return $route;
+            $pagination = $route[$this->paginationKey];
+            unset($route[$this->paginationKey]);
+            $route[$this->paginationKey] = $pagination;
+        }
+
+
+        return $route;
     }
 }
