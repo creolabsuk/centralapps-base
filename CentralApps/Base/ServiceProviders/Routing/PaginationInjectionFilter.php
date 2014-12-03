@@ -6,10 +6,16 @@ class PaginationInjectionFilter implements RouteFilter, UrlFilter
     protected $paginationKey = 'pagination';
     protected $pagination = null;
     protected $pageKey = 'page';
+    protected $request = null;
 
     public function setPagination($pagination)
     {
         $this->pagination = $pagination;
+    }
+
+    public function setRequest(\Symfony\Component\HttpFoundation\Request $request)
+    {
+        $this->request = $request;
     }
 
     public function setPaginationKey($pagination_key)
@@ -31,6 +37,8 @@ class PaginationInjectionFilter implements RouteFilter, UrlFilter
             }
 
             $url = preg_replace('/(\?|\&)?' . $this->pageKey . '+=[^\&]/', '', $url);
+        } elseif (!is_null($request)) {
+            $page = $request->query->get($this->pageKey, []);
         }
 
         if (strpos($url, '?') === false) {
