@@ -34,11 +34,12 @@ class PaginationInjectionFilter implements RouteFilter, UrlFilter
 
                 $this->pagination->setCurrentPageNumber($page);
                 $url = preg_replace('/(\?|\&)?' . $this->pageKey . '=' . $page . '/', '', $url);
+            } elseif (!is_null($this->request)) {
+                $page = $this->request->query->get($this->pageKey, 1);
+                $this->pagination->setCurrentPageNumber($page);
             }
 
             $url = preg_replace('/(\?|\&)?' . $this->pageKey . '+=[^\&]/', '', $url);
-        } elseif (!is_null($request)) {
-            $page = $request->query->get($this->pageKey, []);
         }
 
         if (strpos($url, '?') === false) {
