@@ -1,5 +1,9 @@
 <?php
+
 namespace CentralApps\Base;
+
+use CentralApps\Base\Containers\AbstractContainer;
+use CentralApps\Base\Containers\Container;
 
 class Application
 {
@@ -10,9 +14,9 @@ class Application
     protected $applicationRootFolder = null;
     protected $configurationKey = 'settings';
 
-    public function __construct(\CentralApps\Base\Containers\AbstractContainer $container = null, $application_root_folder=null)
+    public function __construct(AbstractContainer $container = null, $application_root_folder = null)
     {
-        $this->container = (is_null($container)) ? new \CentralApps\Base\Containers\Container() : $container;
+        $this->container = (is_null($container)) ? new Container() : $container;
         $this->bootSequence = new \splPriorityQueue();
         $this->applicationRootFolder = is_null($application_root_folder) ? __DIR__.'/' : $application_root_folder;
     }
@@ -29,10 +33,15 @@ class Application
 
     public function loadConfiguration()
     {
-        $xml_loader = new \GroundSix\Config\XmlLoader(new \GroundSix\Config\ConfigurationsCollection());
-        call_user_func_array(array($xml_loader, 'loadFiles'), func_get_args());
-        $merger = new \GroundSix\Config\Merger();
-        $this->container[$this->configurationKey] = $merger->merge($xml_loader->getConfigurations());
+        // TODO: migrate settings/configuration out of the application
+        $fileContents = simplexml_load_file($configurationFile);
+        if (false == $fileContents) {
+            throw new \Exception('Configuration file ' . $configurationFile . ' not found');
+        }
+
+        $configuration = $this->convertSimpleXmlElementToArray($fileContents);
+
+        $this->container[$this->configurationKey] = $configuration;
     }
 
     public function getExecutionContext()
