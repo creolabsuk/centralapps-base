@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\Views;
 /**
  * Application view interface

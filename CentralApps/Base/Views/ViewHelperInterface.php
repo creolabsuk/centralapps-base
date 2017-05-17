@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\Views;
 
 interface ViewHelperInterface

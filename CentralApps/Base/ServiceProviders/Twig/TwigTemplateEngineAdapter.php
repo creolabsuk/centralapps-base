@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\ServiceProviders\Twig;
 
 class TwigTemplateEngineAdapter implements \CentralApps\Base\Views\TemplateEngineInterface

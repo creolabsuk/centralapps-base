@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\Containers;
 
 abstract class AbstractContainer extends \Pimple

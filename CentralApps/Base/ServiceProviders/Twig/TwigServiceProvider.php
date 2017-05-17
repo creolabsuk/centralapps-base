@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\ServiceProviders\Twig;
 
 class TwigServiceProvider implements \CentralApps\Base\ServiceProviders\ServiceProviderInterface

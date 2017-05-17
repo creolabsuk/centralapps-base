@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\ServiceProviders;
 
 class PdoServiceProvider implements ServiceProviderInterface

@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\Events;
 
 class EventBinding
