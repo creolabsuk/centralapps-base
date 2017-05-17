@@ -1,4 +1,5 @@
 <?php
+
 namespace CentralApps\Base\ServiceProviders;
 
 class SymfonyRoutingServiceProvider implements ServiceProviderInterface
@@ -22,8 +23,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
             $cache = (isset($routing_settings['cache'])) ? $routing_settings['cache'] : null;
 
             $locator = new \Symfony\Component\Config\FileLocator(array($application->getApplicationRootFolder()));
-            $loader = new \Symfony\Component\Routing\Loader\YamlFileLoader($locator);
-            $loader->load('routes.yml');
+
             $request = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
             $request_method = (isset($_POST) && isset($_POST['_method'])) ? $_POST['_method'] : (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '');
             $request_context = new \Symfony\Component\Routing\RequestContext($request, $request_method, (isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : ''));
