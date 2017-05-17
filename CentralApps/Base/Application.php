@@ -31,7 +31,7 @@ class Application
         $this->configurationKey = $key;
     }
 
-    public function loadConfiguration()
+    public function loadConfiguration($configurationFile)
     {
         // TODO: migrate settings/configuration out of the application
         $fileContents = simplexml_load_file($configurationFile);
@@ -42,6 +42,20 @@ class Application
         $configuration = $this->convertSimpleXmlElementToArray($fileContents);
 
         $this->container[$this->configurationKey] = $configuration;
+    }
+
+    protected function convertSimpleXmlElementToArray(\SimpleXMLElement $configuration)
+    {
+        // TODO: migrate settings/configuration out of the application
+        $configuration = (array) $configuration;
+        $resulting_array = $configuration;
+        foreach ($configuration as $key => $value) {
+            if ($value instanceOf \SimpleXMLElement) {
+                $resulting_array[$key] = $this->convertSimpleXmlElementToArray($value);
+            }
+        }
+
+        return $resulting_array;
     }
 
     public function getExecutionContext()
