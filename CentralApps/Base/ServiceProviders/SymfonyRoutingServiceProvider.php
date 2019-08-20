@@ -1,6 +1,9 @@
 <?php
 namespace CentralApps\Base\ServiceProviders;
 
+// TODO: it would be good to be able to add filters to the router
+// so instead of callbacks, stripping tags and ignoring variables
+// the filters would take care of that
 class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 {
     protected $bootPriority = 0;
@@ -22,6 +25,7 @@ class SymfonyRoutingServiceProvider implements ServiceProviderInterface
 
             $locator = new \Symfony\Component\Config\FileLocator([$application->getApplicationRootFolder()]);
             $loader = new \Symfony\Component\Routing\Loader\YamlFileLoader($locator);
+            $loader->load('routes.yml');
 
             $request = (isset($_SERVER['REQUEST_URI'])) ? $_SERVER['REQUEST_URI'] : '';
             $request_method = (isset($_POST) && isset($_POST['_method'])) ? $_POST['_method'] : (isset($_SERVER['REQUEST_METHOD']) ? $_SERVER['REQUEST_METHOD'] : '');
