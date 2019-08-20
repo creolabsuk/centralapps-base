@@ -1,5 +1,5 @@
 {
-    "name": "centralapps/base",
+    "name": "poscentralapps/base",
     "type": "library",
     "description": "Base application structure",
     "keywords": ["application", "framework", "structure"],
@@ -9,6 +9,12 @@
         "pimple/pimple": "v1.1.0"
     },
     "authors": [
+        {
+                "name": "Creo Labs",
+                "email": "support@creolabs.uk",
+                "homepage": "https://creolabs.uk",
+                "role": "Maintainer"
+        },
     	{
     		"name": "Michael Peacock",
     		"email": "mkpeacock@gmail.com",
