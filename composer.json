@@ -9,12 +9,6 @@
         "pimple/pimple": ">=2.0.0"
     },
     "authors": [
-        {
-                "name": "Creo Labs",
-                "email": "support@creolabs.uk",
-                "homepage": "https://creolabs.uk",
-                "role": "Maintainer"
-        },
     	{
     		"name": "Michael Peacock",
     		"email": "mkpeacock@gmail.com",
